@@ -1,18 +1,21 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const env = require("dotenv");
-const { logger } = require("./middleware/logger");
+const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
-const cors = require('cors')
-const corsOptions = require('./config/corsOptions')
+const cors = require("cors");
+const corsOptions = require("./config/corsOptions");
+const connectDB = require("./config/dbConn");
+const mongoose = require("mongoose");
 
 const app = express();
 
-env.config();
+connectDB();
+
 const PORT = process.env.PORT || 3000;
 
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 app.use(logger);
 app.use(express.json());
 app.use(cookieParser());
@@ -32,4 +35,17 @@ app.use("*", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`O servidor está rodando na porta ${PORT}`));
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDb");
+  app.listen(PORT, () =>
+    console.log(`O servidor está rodando na porta ${PORT}`)
+  );
+});
+
+mongoose.connection.on("error", (err) => {
+  console.log(err);
+  logEvents(
+    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+    "mongoErrLog.log"
+  );
+});

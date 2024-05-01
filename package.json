@@ -1,5 +1,5 @@
 {
-  "name": "lesson_2",
+  "name": "lesson_3",
   "version": "1.0.0",
   "description": "techNotes API MERN Stack",
   "main": "index.js",
@@ -16,6 +16,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongoose": "^8.3.2",
+    "mongoose-sequence": "^6.0.1",
     "nodemon": "^3.1.0",
     "uuid": "^9.0.1"
   }
